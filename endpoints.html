@@ -1,0 +1,1018 @@
+<table border="1">
+  <thead>
+  <tr>
+    <th>Endpoint</th>
+    <th>Type</th>
+    <th>Request payload</th>
+    <th>Response header</th>
+    <th>Response payload</th>
+  </tr>
+  </thead>
+  <tbody>
+
+  <tr>
+    <td><b>/api/login</b></td>
+    <td>POST</td>
+    <td>{"login": string, <br/>
+      "password": string<br/>
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      {<br/>
+      "token": string,<br/>
+      "username": string,<br/>
+      "acl?": {<br/>
+      "role": "admin",<br/>
+      "resources": [
+      {<br/>
+      "methods": [list of methods user has access to ],<br/>
+      "urls": [list of urls user has access to ]<br/>
+      } ],<br/>
+      "privileges": [
+      {<br/>
+      "entity": "class name, e.g. candidate",<br/>
+      "fields": [
+      {<br/>
+      "name": "field name",<br/>
+      "privileges": [
+      {<br/>
+      "name": "privilege name",<br/>
+      "allow": true if allow otherwise false<br/>
+      }]}]}]
+      }<br/>
+      }<br/>
+      <span style="color: red;"><b>Absence of field "acl" means deny all</b></span>
+    </td>
+  </tr>
+
+  <tr>
+    <td><b>/api/login</b></td>
+    <td>POST</td>
+    <td>{"login": wrong login, <br/>
+      "password": wrong password<br/>
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 401</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap></td>
+  </tr>
+  <tr>
+    <td colspan="5" style="color: red"><b>Each request below have to have header "X-Auth-Token"</b></td>
+  </tr>
+  <tr>
+    <td colspan="5" style="text-align: center"><h3>Candidates</h3></td>
+  </tr>
+  <tr>
+    <td><b>/api/candidates</b><br/>
+      <b>Search(GET params):</b><br/>
+      q - full text search<br/>
+      <b>Pagination(GET params):</b><br/>
+      page - page number<br/>
+      perPage - amount of items which will be shown<br/>
+    </td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      {content: [{
+      "id": "candidate id",<br/>
+      "name": "candidate name",<br/>
+      "surname": "candidate surname",<br/>
+      "email": "candidate email",<br/>
+      "skype": "candidate skype", <br/>
+      "phone": "candidate phone",<br/>
+      "status": {<br/>
+      "id": "status id",<br/>
+      "title": "title"<br/>
+      }, <br/>
+      "source": {<br/>
+      "id": "source id",<br/>
+      "title": "source title"
+      },<br/>
+      "position": {<br/>
+      "id": "position id",<br/>
+      "title": "position title"
+      },<br/>
+      "seniority": {<br/>
+      "id": "seniority id",<br/>
+      "title": "seniority title"
+      },<br/>
+      "cv": "cv filename",<br/>
+      "isCvExists": "true if cv is set otherwise false",<br/>
+      "vacancy"?: "vacancy id",<br/>
+      "author": {<br/>
+      "id": author id<br/>
+      "name": author name <br/>
+      }
+      }],
+      <br/>total: total amount of candidates
+      ]
+    </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 500</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>String: Error message</td>
+  </tr>
+
+  <tr>
+    <td><b>/api/candidates/{existingCandidateId}/cv</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: cv content type</li>
+      </ul>
+    </td>
+    <td nowrap>cv content</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 500</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>String: Error message</td>
+  </tr>
+  <tr>
+    <td><b>/api/candidates/{nonExistingCandidateId}/cv</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 404</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 500</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>String: Error message</td>
+  </tr>
+  <!-- Candidate history -->
+  <tr>
+    <td><b>/api/candidates/{existingCandidateId}/history</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>[{<br/>
+      "author": who change,<br/>
+      "data": [{<br/>
+      "entity": "entity name",<br/>
+      "field": "entity field",<br/>
+      "oldValue": "old value",<br/>
+      "newValue": "new value"<br/>
+      }],<br/>
+      "date": changes date<br/>
+      }]
+    </td>
+  </tr>
+  <tr>
+    <td><b>/api/candidates/{nonExistingCandidateId}/history</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 404</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap></td>
+  </tr>
+
+  <!-- Details -->
+  <tr>
+    <td nowrap><b>/api/candidates/{existingCandidateId}</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      {"id": "candidate id",<br/>
+      "name": "candidate name",<br/>
+      "surname": "candidate surname",<br/>
+      "email": "candidate email",<br/>
+      "skype": "candidate skype", <br/>
+      "phone": "candidate phone",<br/>
+      "status": {<br/>
+      "id": "status id",<br/>
+      "title": "title"<br/>
+      }, <br/>
+      "source": {<br/>
+      "id": "source id",<br/>
+      "title": "source title"
+      },<br/>
+      "position": {<br/>
+      "id": "position id",<br/>
+      "title": "position title"
+      },<br/>
+      "seniority": {<br/>
+      "id": "seniority id",<br/>
+      "title": "seniority title",<br/>
+      "cv": "cv filename",<br/>
+      "isCvExists": "true if cv is set otherwise false",<br/>
+      "vacancy"?: "vacancy id",<br/>
+      "author": {<br/>
+      "id": author id<br/>
+      "name": author name <br/>
+      }
+      }
+    </td>
+  </tr>
+
+  <tr>
+    <td nowrap><b>/api/candidates/{existingCandidateId}/status/next</b><br/>List of the next possible status</td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      [{"id": "statusid",<br/>
+      "title": "statustitle"<br/>
+      }]
+    </td>
+  </tr>
+
+  <tr>
+    <td nowrap><b>/api/candidates/{nonExistingCandidateId}</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 404</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 500</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>String: Error message</td>
+  </tr>
+  <!-- Create candidate -->
+  <tr>
+    <td nowrap><b>/api/candidates</b></td>
+    <td>POST</td>
+    <td nowrap>
+      {"name":"candidate name",<br/>
+      "surname":"candidate surname",<br/>
+      "email":"candidate email",<br/>
+      "phone":"candidate phone",<br/>
+      "skype":"candidate skype",<br/>
+      "seniority": "seniority id",<br/>
+      "position": "position id",<br/>
+      "source": "source type id",<br/>
+      "cv":"base64 encoded cv file"
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 201</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>{
+      "id": "candidate id"
+      }
+    </td>
+  </tr>
+  <tr>
+    <td nowrap><b>/api/candidates</b></td>
+    <td>POST</td>
+    <td nowrap>{"name":"less than 2 symbols or whitespace",<br/>
+      "surname":"less than 2 symbols or whitespace",<br/>
+      "email":"wrong format",<br/>
+      "phone":"numbers only",<br/>
+      "skype":"candidate skype",<br/>
+      "seniority": "non existing id",<br/>
+      "position": "non existing id",<br/>
+      "source": "non existing id",<br/>
+      "cv":"base64 encoded cv file"
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 400</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>
+      [{<br/>
+      "field": "invalid field name",<br/>
+      "message": "error message"
+      <br/>}]
+    </td>
+  </tr>
+  <!-- Edit candidate -->
+  <tr>
+    <td nowrap><b>/api/candidates/{existingCandidateId}</b></td>
+    <td>PUT</td>
+    <td nowrap>
+      {"name":"candidate name",<br/>
+      "surname":"candidate surname",<br/>
+      "email":"candidate email",<br/>
+      "phone":"candidate phone",<br/>
+      "skype":"candidate skype",<br/>
+      "seniority": "seniority id",<br/>
+      "position": "position id",<br/>
+      "source": "source type id",<br/>
+      "statusId":"status id",<br/>
+      "cv":"base64 encoded cv file",<br/>
+      "vacancy"?:"existing vacancy id"
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td nowrap><b>/api/candidates/{existingCandidateId}</b></td>
+    <td>PUT</td>
+    <td nowrap>{"name":"less than 2 symbols or whitespace",<br/>
+      "surname":"less than 2 symbols or whitespace",<br/>
+      "email":"wrong format",<br/>
+      "phone":"numbers only",<br/>
+      "skype":"candidate skype",<br/>
+      "seniority": "non existing id",<br/>
+      "position": "non existing id",<br/>
+      "source": "non existing id",<br/>
+      "statusId":"non existing id",<br/>
+      "cv":"base64 encoded cv file",<br/>
+      "vacancy"?:"existing vacancy id"
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 400</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>
+      [{<br/>
+      "field": "invalid field name",<br/>
+      "message": "error message"
+      <br/>}]
+    </td>
+  </tr>
+  <tr>
+    <td nowrap><b>/api/candidates/{nonExistingCandidateId}</b></td>
+    <td>PUT</td>
+    <td nowrap>
+      {"name":"candidate name",<br/>
+      "surname":"candidate surname",<br/>
+      "email":"candidate email",<br/>
+      "phone":"candidate phone",<br/>
+      "skype":"candidate skype",<br/>
+      "seniority": "seniority id",<br/>
+      "position": "position id",<br/>
+      "source": "source type id",<br/>
+      "statusId":"non existing id"<br/>
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 404</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td></td>
+  </tr>
+  <!-- Create comments -->
+  <tr>
+    <td nowrap><b>/api/candidates/{existingCandidateId}/comments</b></td>
+    <td>POST</td>
+    <td nowrap>
+      {"body":"comment body", <br/>"isPrivate": true of false}
+    </td>
+    <td>
+      <ul>
+        <li>Status: 201</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>{
+      "id": "comment id"
+      }
+    </td>
+  </tr>
+  <tr>
+    <td nowrap><b>/api/candidates/{existingCandidateId}/comments</b></td>
+    <td>POST</td>
+    <td nowrap>
+      {"body":"empty", <br/>"isPrivate": not true or not false}
+    </td>
+    <td>
+      <ul>
+        <li>Status: 400</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>[{<br/>
+      "field": "invalid field name",<br/>
+      "message": "error message" <br/>
+      }]
+    </td>
+  </tr>
+  <!-- Update comment -->
+  <tr>
+    <td nowrap><b>/api/candidates/{existingCandidateId}/comments/{existingCommentId}</b></td>
+    <td>PUT</td>
+    <td nowrap>
+      {"body":"comment body", <br/>"isPrivate": true of false}
+    </td>
+    <td>
+      <ul>
+        <li>Status: 201</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>{
+      "id": "comment id"
+      }
+    </td>
+  </tr>
+  <tr>
+    <td nowrap><b>/api/candidates/{existingCandidateId}/comments/{existingCommentId}</b></td>
+    <td>PUT</td>
+    <td nowrap>
+      {"body":"empty", <br/>"isPrivate": not true or not false}
+    </td>
+    <td>
+      <ul>
+        <li>Status: 400</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>[{<br/>
+      "field": "invalid field name",<br/>
+      "message": "error message" <br/>
+      }]
+    </td>
+  </tr>
+  <tr>
+    <td><b>/api/candidates/{existingCandidateId}/comments</b><br/>
+      <b>Pagination(GET params):</b><br/>
+      page - page number<br/>
+      perPage - amount of items which will be shown<br/>
+    </td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      {content:[{<br/>
+      "author": { <br/>
+      "id": author id, <br/>
+      "name": author name<br/>
+      }, <br/>
+      "body": comment body, <br/>
+      "id": comment id, <br/>
+      "date": timestamp, <br/>
+      "isPrivate": boolean
+      <br/>}],
+      <br/>total: total amount of comments
+      }
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan="5" style="text-align: center"><h3>User</h3></td>
+  </tr>
+
+  <tr>
+    <td colspan="5" style="text-align: center"><h3>Vacancies</h3></td>
+  </tr>
+
+  <tr>
+    <td><b>/api/vacancies</b><br/>
+      <b>Search(GET params):</b><br/>
+      q - full text search<br/>
+      <b>Pagination(GET params):</b><br/>
+      page - page number<br/>
+      perPage - amount of items which will be shown<br/>
+    </td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      {content: [{
+      "id": "vacancy id",<br/>
+      "project": "project name",<br/>
+      "description": "description",<br/>
+      "requirements": "requirements",<br/>
+      "position": {<br/>
+      "id": "position id",<br/>
+      "title": "position title"
+      },<br/>
+      "seniority": {<br/>
+      "id": "seniority id",<br/>
+      "title": "seniority title"
+      },<br/>
+      "location": {<br/>
+      "id": "location id",<br/>
+      "title": "location title"
+      },<br/>
+      "quantity": "",<br/>
+      "owner": {<br/>
+      "id": author id<br/>
+      "name": author name <br/>
+      },<br/>
+      interviewers: [
+      {<br/>
+      "id": "user id",<br/>
+      "name": "user name"<br/>
+      }
+      ],<br/>
+      "date": "timestamp" <br/>
+      "author": {<br/>
+      "id": author id<br/>
+      "name": author name <br/>
+      }
+      }],
+      <br/>total: total amount of vacancies
+      ]
+    </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 500</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>String: Error message</td>
+  </tr>
+
+  <!-- Details -->
+  <tr>
+    <td nowrap><b>/api/vacancies/{existingVacancyId}</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      {
+      "id": "vacancy id",<br/>
+      "project": "project name",<br/>
+      "description": "description",<br/>
+      "requirements": "requirements",<br/>
+      "position": {<br/>
+      "id": "position id",<br/>
+      "title": "position title"
+      },<br/>
+      "seniority": {<br/>
+      "id": "seniority id",<br/>
+      "title": "seniority title"
+      },<br/>
+      "location": {<br/>
+      "id": "location id",<br/>
+      "title": "location title"
+      },<br/>
+      "quantity": "",<br/>
+      "owner": {<br/>
+      "id": author id<br/>
+      "name": author name <br/>
+      },<br/>
+      interviewers: [
+      {<br/>
+      "id": "user id",<br/>
+      "name": "user name"<br/>
+      }
+      ],<br/>
+      "date": "timestamp" <br/>
+      "author": {<br/>
+      "id": author id<br/>
+      "name": author name <br/>
+      }
+      }
+    </td>
+  </tr>
+  <tr>
+    <td nowrap><b>/api/vacancies/{nonExistingVacancyId}</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 404</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 500</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>String: Error message</td>
+  </tr>
+  <!-- Create vacancy -->
+  <tr>
+    <td nowrap><b>/api/vacancies</b></td>
+    <td>POST</td>
+    <td nowrap>
+      {<br />
+      "project": "project name",<br />
+      "description": "vacancy description",<br />
+      "requirements": "vacancy requirements",<br />
+      "seniority": "existing seniority",<br />
+      "position": "existing position",<br />
+      "assignee": "person who is responsible for vacancy",<br />
+      "quantity": "amount of candidates",<br />
+      "location": "existing location id",<br />
+      "interviewers"?: "list of existing user id"<br />
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 201</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>{
+      "id": "vacancy id"
+      }
+    </td>
+  </tr>
+  <tr>
+    <td nowrap><b>/api/vacancies</b></td>
+    <td>POST</td>
+    <td nowrap>{<br />
+      "project": "not empty",<br />
+      "description": "not empty",<br />
+      "requirements": "not empty",<br />
+      "seniority": "non-existing seniority",<br />
+      "position": "non-existing position",<br />
+      "assignee": "non-existing person",<br />
+      "quantity": "greater than 5",<br />
+      "location": "non-existing location id",<br />
+      "interviewers"?: "non-existing user id"<br />
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 400</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>
+      [{<br/>
+      "field": "invalid field name",<br/>
+      "message": "error message"
+      <br/>}]
+    </td>
+  </tr>
+  <!-- Edit vacancy -->
+  <tr>
+    <td nowrap><b>/api/vacancies/{existingVacancyId}</b></td>
+    <td>PUT</td>
+    <td nowrap>
+      {<br />
+      "project": "project name",<br />
+      "description": "vacancy description",<br />
+      "requirements": "vacancy requirements",<br />
+      "seniority": "existing seniority",<br />
+      "position": "existing position",<br />
+      "assignee": "person who is responsible for vacancy",<br />
+      "quantity": "amount of candidates",<br />
+      "location": "existing location id",<br />
+      "interviewers"?: "list of existing user id"<br />,
+      "status": "existing status id"<br />
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td nowrap><b>/api/vacancies/{existingVacancyId}</b></td>
+    <td>PUT</td>
+    <td nowrap>
+      {<br />
+      "project": "not empty",<br />
+      "description": "not empty",<br />
+      "requirements": "not empty",<br />
+      "seniority": "non-existing seniority",<br />
+      "position": "non-existing position",<br />
+      "assignee": "non-existing person",<br />
+      "quantity": "greater than 5",<br />
+      "location": "non-existing location id",<br />
+      "interviewers"?: "non-existing user id"<br />
+      "status": "incorrect status id"<br />
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 400</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>
+      [{<br/>
+      "field": "invalid field name",<br/>
+      "message": "error message"
+      <br/>}]
+    </td>
+  </tr>
+  <tr>
+    <td nowrap><b>/api/vacancies/{nonExistingVacancyId}</b></td>
+    <td>PUT</td>
+    <td nowrap>
+      {<br />
+      "project": "project name",<br />
+      "description": "vacancy description",<br />
+      "requirements": "vacancy requirements",<br />
+      "seniority": "existing seniority",<br />
+      "position": "existing position",<br />
+      "assignee": "person who is responsible for vacancy",<br />
+      "quantity": "amount of candidates",<br />
+      "location": "existing location id",<br />
+      "interviewers"?: "list of existing user id"<br />,
+      "status": "existing status id"<br />
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 404</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td></td>
+  </tr>
+  <!-- User -->
+  <tr>
+    <td><b>/api/users</b><br/>
+      <b>Pagination(GET params):</b><br/>
+      page - page number<br/>
+      perPage - amount of items which will be shown<br/></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      {content: [{<br/>
+      "id": "user id",<br/>
+      "name": "user name",<br/>
+      "email": "user email",<br/>
+      "role": {<br/>
+      "id": "role id",<br/>
+      "name": "role name"<br/>
+      }<br/>
+      }],<br/>
+      <br/>total: total amount of users
+      }
+    </td>
+  </tr>
+
+  <tr>
+    <td><b>/api/users/{existingUserId}</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      {<br/>
+      "id": "role id",<br/>
+      "name": "role name"<br/>
+      }<br/>
+    </td>
+  </tr>
+
+  <tr>
+    <td><b>/api/users/{nonexistingUserId}</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 400</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td><b>/api/users/{existingUserId}</b></td>
+    <td>PUT</td>
+    <td>
+      {<br/>
+      "id":"role id"<br/>
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td><b>/api/users/{existingUserId}</b></td>
+    <td>PUT</td>
+    <td>
+      {<br/>
+      "id":"nonexisting role id"<br/>
+      }
+    </td>
+    <td>
+      <ul>
+        <li>Status: 400</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td>[{
+      "field": "invalid field name",
+      "message": "error message"
+      }]
+    </td>
+  </tr>
+
+  <tr>
+    <td><b>/api/users/role/type</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>[{
+      "id": role id<br/>
+      "name": role name<br/>
+      }]
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan="5" style="text-align: center"><h3>Form fields data</h3></td>
+  </tr>
+  <!-- Vocabulary -->
+  <tr>
+    <td><b>/api/vocabulary</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      {"seniority": [{"id": "seniority id",<br/>
+      "title": "seniority title"}],<br/>
+      "position": [{"id": "position id",<br/>
+      "title": "position title"}],<br/>
+      "source": [{"id": "source id",<br/>
+      "title": "source title"}]}
+    </td>
+  </tr>
+  <!-- Seniority -->
+  <tr>
+    <td><b>/api/seniority/type</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      [{"id": "seniority id",<br/>
+      "title": "seniority title"<br/>
+      }]
+    </td>
+  </tr>
+  <!-- Position -->
+  <tr>
+    <td><b>/api/position/type</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      [{"id": "position id",<br/>
+      "title": "position title"<br/>
+      }]
+    </td>
+  </tr>
+  <!-- Source type -->
+  <tr>
+    <td><b>/api/source/type</b></td>
+    <td>GET</td>
+    <td></td>
+    <td>
+      <ul>
+        <li>Status: 200</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+    </td>
+    <td nowrap>
+      [{"id": "source id",<br/>
+      "title": "source title"<br/>
+      }]
+    </td>
+  </tr>
+  </tbody>
+</table>
