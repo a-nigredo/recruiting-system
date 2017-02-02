@@ -1,0 +1,1 @@
+ALTER TABLE `candidates` CHANGE COLUMN `status` `status` ENUM('1','2','3','4','5','6','7') NOT NULL DEFAULT '1' AFTER `author_id`;

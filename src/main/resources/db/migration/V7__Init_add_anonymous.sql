@@ -1,0 +1,1 @@
+INSERT INTO `irs`.`users` (`name`, `email`, `role_id`) VALUES ('anonymous', 'anonymous@anonymous.com', 5);

@@ -1,0 +1,1 @@
+ALTER TABLE `candidates_snapshot` ADD PRIMARY KEY (`id`);

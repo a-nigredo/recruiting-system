@@ -1,0 +1,2 @@
+ALTER TABLE `candidates` ADD COLUMN `vacancy_id` VARCHAR(50) NULL AFTER `status`;
+ALTER TABLE `candidates` ADD CONSTRAINT `vacancy_id_candidate_fk` FOREIGN KEY (`vacancy_id`) REFERENCES `vacancies` (`id`);

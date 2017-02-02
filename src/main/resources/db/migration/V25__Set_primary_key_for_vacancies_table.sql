@@ -1,0 +1,1 @@
+ALTER TABLE `vacancies_snapshot` ADD PRIMARY KEY (`id`);

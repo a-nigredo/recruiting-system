@@ -1,0 +1,1 @@
+ALTER TABLE `candidates` CHANGE COLUMN `surname` `surname` TEXT NULL AFTER `name`,DROP COLUMN `comment`;

@@ -1,0 +1,2 @@
+ALTER TABLE `roles`
+	CHANGE COLUMN `name` `title` TEXT NOT NULL AFTER `id`;

@@ -1,0 +1,1 @@
+ALTER TABLE `cv` ADD COLUMN `content` LONGBLOB NULL AFTER `creation_date`;
